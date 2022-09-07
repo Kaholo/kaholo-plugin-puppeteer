@@ -1,25 +1,44 @@
-const { bootstrap } = require("@kaholo/plugin-library");
+const { bootstrap, docker } = require("@kaholo/plugin-library");
+const util = require("util");
+const path = require("path");
+const childProcess = require("child_process");
 
-async function hello(params) {
+const exec = util.promisify(childProcess.exec);
+
+const KAHOLO_PUPPETEER_IMAGE = "buildkite/puppeteer";
+
+async function runPuppeteerTest(params) {
   const {
-    helloName,
-    saySecret,
-    secret,
+    puppeteerJSFile,
+    workingDirectory,
+    environmentalVariables = {},
   } = params;
 
-  let greeting = `Hello ${helloName}!`;
+  const envVarsParams = docker.buildEnvironmentVariableArguments(environmentalVariables);
 
-  if (saySecret && !secret) {
-    throw new Error("No secret was provided to say. Please provide a secret or uncheck \"Say Secret\".");
+  const commandOutput = await exec(`\
+docker run --rm \
+${envVarsParams} \
+-v ${path.resolve(workingDirectory)}:/project \
+-w /project \
+${KAHOLO_PUPPETEER_IMAGE} \
+node ${puppeteerJSFile}\
+`, {
+    env: {
+      ...process.env,
+      ...environmentalVariables,
+    },
+  });
+
+  if (commandOutput.stderr && !commandOutput.stdout) {
+    throw new Error(commandOutput.stderr);
+  } else if (commandOutput.stderr) {
+    console.error(commandOutput.stderr);
   }
 
-  if (saySecret) {
-    greeting += `\nHere is the secret: ${secret}`;
-  }
-
-  return greeting;
+  return commandOutput.stdout;
 }
 
 module.exports = bootstrap({
-  hello,
+  runPuppeteerTest,
 });

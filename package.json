@@ -1,7 +1,7 @@
 {
-  "name": "kaholo-plugin-template",
+  "name": "puppeteer",
   "version": "1.0.0",
-  "description": "A template for Kaholo plugin development",
+  "description": "Puppeteer tests runner for Kaholo",
   "main": "app.js",
   "scripts": {
     "test": "npx jest .",
@@ -10,21 +10,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kaholo/kaholo-plugin-template.git"
+    "url": "git+https://github.com/Kaholo/kaholo-plugin-puppeteer.git"
   },
   "author": "Kaholo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Kaholo/kaholo-plugin-template/issues"
+    "url": "https://github.com/Kaholo/kaholo-plugin-puppeteer/issues"
   },
-  "homepage": "https://github.com/Kaholo/kaholo-plugin-template#readme",
+  "homepage": "https://github.com/Kaholo/kaholo-plugin-puppeteer#readme",
   "dependencies": {
-    "@kaholo/plugin-library": "^2.0.0"
+    "@kaholo/plugin-library": "^2.0.0",
+    "puppeteer": "17.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.8.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4",
-    "jest": "^27.5.0"
+    "eslint": "8.8.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.25.4",
+    "jest": "27.5.0"
   }
 }

@@ -1,0 +1,4 @@
+{
+  "PUPPETEER_DOCKER_IMAGE": "itisfoundation/puppeteer:14-3",
+  "PUPPETEER_CLI_NAME": "node"
+}

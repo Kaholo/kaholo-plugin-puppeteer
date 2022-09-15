@@ -1,24 +1,32 @@
 {
   "name": "puppeteer",
   "viewName": "Puppeteer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "executer",
   "execProgram": "node",
   "imgUrl": "logo.png",
   "main": "app.js",
-  "description": "Kaholo Plugin for Puppeteer",
+  "description": "UI testing using JavaScript tests with a headless browser",
+  "category": [
+    "Testing"
+  ],
+  "keywords": [
+    "puppeteer",
+    "javascript",
+    "headless",
+    "chrome",
+    "chromium",
+    "selenium",
+    "testing",
+    "browser"
+   ],
   "settings": [
     {
       "name": "workingDirectory",
-      "viewName": "Working Directory",
+      "viewName": "Default Working Directory",
       "type": "string",
-      "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file"
-    },
-    {
-      "name": "puppeteerJSFile",
-      "viewName": "Puppeteer JavaScript File",
-      "type": "string",
-      "description": "JavaScript File that run a puppeteer test"
+      "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file",
+      "learnUrl": "https://pptr.dev/"
     }
   ],
   "methods": [
@@ -29,22 +37,22 @@
         {
           "name": "workingDirectory",
           "viewName": "Working Directory",
-          "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file",
-          "placeholder": "testrepo/suite-a/uitests",
+          "description": "Path to a directory on the Kaholo agent which contains puppeteer tests",
+          "placeholder": "testrepo/uitests/auth",
           "type": "string"
         },
         {
           "name": "puppeteerJSFile",
-          "viewName": "Puppeteer JavaScript File",
+          "viewName": "Puppeteer Test File",
           "description": "JavaScript File that runs a puppeteer test",
-          "placeholder": "test-one.js",
+          "placeholder": "login-test.js",
           "type": "string",
           "required": true,
-          "default": "kaholo-login.js"
+          "learnUrl": "https://pptr.dev/"
         },
         {
           "name": "environmentalVariables",
-          "viewName": "Environmental Variables",
+          "viewName": "Environment Variables",
           "description": "One key=value pair per line to be set as environment variables",
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",

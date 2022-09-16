@@ -39,8 +39,7 @@
           "description": "JavaScript File that runs a puppeteer test",
           "placeholder": "test-one.js",
           "type": "string",
-          "required": true,
-          "default": "kaholo-login.js"
+          "required": true
         },
         {
           "name": "environmentalVariables",
@@ -49,6 +48,47 @@
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",
           "parserType": "keyValuePairs"
+        }
+      ]
+    },
+    {
+      "name": "runPuppeteerTestParams",
+      "viewName": "Run Puppeteer Test (Params)",
+      "params": [
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
+          "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file",
+          "placeholder": "testrepo/suite-a/uitests",
+          "type": "string"
+        },
+        {
+          "name": "puppeteerJSFile",
+          "viewName": "Puppeteer JavaScript File",
+          "description": "JavaScript File that runs a puppeteer test",
+          "placeholder": "test-one.js",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "kaholoURL",
+          "viewName": "Kaholo URL",
+          "description": "The base URL of your Kaholo Environment",
+          "placeholder": "https://kaholo-mike.nova-ten.com",
+          "type": "string"
+        },
+        {
+          "name": "kaholoUsername",
+          "viewName": "Username",
+          "description": "The User Accessing the Kaholo Environment",
+          "placeholder": "tester@kaholo.io",
+          "type": "string"
+        },
+        {
+          "name": "kaholoPassword",
+          "viewName": "Password",
+          "description": "The password of the user",
+          "type": "vault"
         }
       ]
     }

@@ -7,6 +7,19 @@
   "imgUrl": "logo.png",
   "main": "app.js",
   "description": "Kaholo Plugin for Puppeteer",
+  "category": [
+    "Testing"
+  ],
+  "keywords": [
+    "puppeteer",
+    "javascript",
+    "headless",
+    "chrome",
+    "chromium",
+    "selenium",
+    "testing",
+    "browser"
+   ],
   "settings": [
     {
       "name": "workingDirectory",

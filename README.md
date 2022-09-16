@@ -1,85 +1,61 @@
-# Kaholo SystemXYZ Plugin
-This plugin integrates ACME, inc. SystemXYZ with Kaholo, providing access to SystemXYZ's alerting functionality, for example sending a Ex message or setting an Zed alarm to notify someone of the results of a Kaholo Pipeline Action. For triggering Kaholo Pipelines from SystemXYZ, please see the Kaholo [SystemXYZ trigger](https://github.com/Kaholo/kaholo-trigger-systemxyz) instead.
+# Kaholo Puppeteer Plugin
+This plugin enables Kaholo to run [Puppeteer](https://pptr.dev/) tests. Puppeteer is a Node library which provides a high-level API to control Chrome or Chromium over the [DevTools Protocol](https://chromedevtools.github.io/devtools-protocol/). Puppeteer runs headless by default, but can be configured to run full (non-headless) Chrome or Chromium. Puppeteer test are written using JavaScript.
+
+Simple Example Puppeteer test file `example.js`
+
+    const puppeteer = require('puppeteer');
+
+    (async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(process.env.TESTED_URL);
+    await page.screenshot({path: 'example.png'});
+    await browser.close();
+    })();
+
+    console.log(`Screenshot example.png taken of ${process.env.TESTED_URL}`);
+
+Using `console.log()` sends results to the Kaholo execution's Final Result. Final Result is best using JSON, e.g. `console.log(JSON.stringify({ "status": "PASS" }))`. This makes it easy for actions downstream in your Kaholo pipeline to access data from the result using a single line of code, e.g. `kaholo.actions.puppeteer1.result.status`.
+
+Test parameters to be specified by the Kaholo plugin should appear in the Puppeteer tests as environment variables, in the example above `process.env.TESTED_URL` is an environment variable named `TESTED_URL`. By configuring `TESTED_URL=http://www.kittens.com/` in the plugin with the above `example.js` test, the resulting screenshot will most likely contain some kittens.
+
+Often tests will be separated into stages, such that one test should continue where the previous test left off. In Puppeteer this is done by preserving the user data in the test as files on the disk - userDataDir. Also, to run inside a docker container the test must NOT use the default sandboxing features, they must be disabled. These settings are made when launching the browser, as seen in the following example snippet of Puppeteer test code.
+
+        const browser = await puppeteer.launch({
+            userDataDir: './userdatadir',
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
 
 ## Prerequisites
-This plugin works with SystemXYZ version 4.0 and later, both SaaS platform and locally hosted versions.
+Puppeteer tests must be developed by test engineers and copied onto the Kaholo agent, typically using the [Git plugin](https://github.com/Kaholo/kaholo-plugin-git) with method `Clone Repository`. All the software prerequisites are handled by the plugin by running the tests within a docker container.
 
-The following SystemXYZ APIs must be enabled for 3rd party access in the SystemXYZ Platform. The Kaholo plugin's service ID string is "kaholo-plugin-da2de162". SystemXYZ does not support 3rd party access to the Wy API so there are no Wy controller methods in the plugin.
+## Use of Docker
+This plugin makes use of the [buildkite/puppeteer](https://hub.docker.com/r/buildkite/puppeteer/) docker image to run Puppeteer. This has many upsides but a few downsides as well of which the user should be aware.
 
->**SystemXYZ Ex API**
->
->**SystemXYZ Zed API**
+If running your own Kaholo agents in a custom environment, you will have to ensure docker is installed and running on the agent and has sufficient privilege to retrieve the image and start a container. If the agent is already running in a container (kubernetes or docker) then this means a docker container running within another container.
 
-The SystemXYZ connectivity package must be installed on Kaholo agents. A `Test API` method is provided in the plugin. Check Parameter "Install API" in order to automatically install the SystemXYZ connectivity package. Alternatively, ask your Kaholo administrator to follow the [installation instructions](https://www.systemxyz.com.nz/install_connectivity_package/v4) on the SystemXYZ webite.
+The first time the plugin is used on each agent, docker may spend a minute or two downloading the image. After that the delay of starting up another docker image each time is quite small, a second or two.
+
+Because the Puppeteer tests are running inside a docker container, they will not have access to the filesystem on the agent. This is why parameter "Working Directory" is necessary. The directory specified as Working Directory will be mounted as a docker volume so files can be read and written by the Puppeteer test so long as they are within this directory or a subdirectory. Files written there will remain available after execution on the Kaholo agent, even though the Puppeteer docker image is destroyed.
+
+Should these limitations negatively impact on your use case, [please let us know](https://kaholo.io/contact/).
 
 ## Access and Authentication
-The plugin accesses SystemXYZ using the same URL as the web console, e.g. https://your-account.systemxyz.com.nz/. However, authentication with user/password is not permitted for automated processes.
-
-Instead the plugin uses SystemXYZ service tokens to authenticate. A SystemXYZ service token is a string that begins `XYZ-`, for example `XYZ-9ef6df656f9db28d4feaac0c0c6855bc`.  To get an appropriate service token, ask your SystemXYZ administrator for one that has permissions for the following actions:
-* ex-send
-* ex-send-email (only if email feature is used)
-* zed-readgroups
-* zed-triggergroups
-* xyz-vieworg
-* xyz-viewalarms
-
-You will also what to specify which Zed groups you will access, or alternately if the service token is granted `zed-any`, the plugin will be able to read and trigger all SystemXYZ groups.
-
-You may have more than one service token, these are vaulted in the Kaholo Vault. The service token is needed for Parameter "XYZ Service Token" as described below.
+There is not access or authentication requirement other than the URL being tested must be reachable on the network by the Kaholo agent. The Puppeteer tests themselves are responsible fro authenticating with the application being tested.
 
 ## Plugin Installation
 For download, installation, upgrade, downgrade and troubleshooting of plugins in general, see [INSTALL.md](./INSTALL.md).
 
 ## Plugin Settings
 Plugin settings act as default parameter values. If configured in plugin settings, the action parameters may be left unconfigured. Action parameters configured anyway over-ride the plugin-level settings for that Action.
-* Default XYZ Endpoint - The URL of your SystemXYZ installation, e.g. `https://your-account.systemxyz.com.nz/`
-* Default Zed Alarm Group - The Zed Alarm Group to use with Zed alarm methods, e.g. `zed-group-one`. Not used for Ex message-related methods.
-* Default Service Token (Vault) - The service token, stored in the Kaholo vault for authentication and access. e.g. `XYZ-9ef6df656f9db28d4feaac0c0c6855bc`
+* Default Working Directory - left unconfigured the default working directory is determined by the Kaholo agent, normally a directory named `workspace`. If configured it may be either a path relative from there or an absolute path (one beginning with `/`).
 
-## Pipelining Alarm Messaging
-A common use case for this plugin is to prototype Wy controller notifications by catching Zed Hooks, applying logic, and sending Ex messages as appropriate. To do this the following steps are needed:
-1. Install and configure the Kaholo [SystemXYZ trigger](https://github.com/Kaholo/kaholo-trigger-systemxyz) to be activated by a [SystemXYZ Zed Hook](https://www.systemxyz.com.nz/zed_hooks/v4).
-1. Use the trigger to start your prototype Kaholo pipeline.
-1. Use method Read Zed Alarms to collect the active alarm list and details.
-1. Apply your logic using the Kaholo Code page and/or Kaholo Conditional Code.
-1. Use method Send Ex Message if your logic determines it appropriate.
+For example use Git plugin to clone a test repository to `myrepo` and then the Puppeteer Test File may be found at `myrepo/puppeteer/uitests/auth/login-test.js`, and Working Directory left unconfigured. Alternately one could use Working Directory of `myrepo/puppeteer/uitests/auth/` and then the Puppeteer Test File is just `login-test.js`. Furthermore if one Git clones to absolute /my/path/myrepo, the Working Directory may be `/my/path/myrepo/puppeteer/uitests/auth/`, or left unconfigured and then the full abosulte path and file name provided for the Puppeteer Test File - `/my/path/myrepo/puppeteer/uitests/auth/login-test.js`.
 
-## Method: Test API
-This method does a trivial test of the SystemXYZ connectivity package installed on the Kaholo agent, in order to validate that it is installed correctly and can network connect to the XYZ Endpoint. It returns only the version number of the SystemXYZ system and does not require a service token.
+## Method: Run Puppeteer Test
+This method runs a Puppeteer Test.
 
 ### Parameters
-Required parameters have an asterisk (*) next to their names.
-* XYZ Endpoint * - as described above in [plugin settings](#plugin-settings)
-* Install API (checkbox) - if checked and the connectivity package is not found on the agent, the plugin will attempt to automatically install it.
-
-## Method: Send Ex Message
-This method composes an Ex Message to send to SystemXYZ users and/or groups. Message bodies may be in JSON, MD, HTML, or plain text format. Malformed JSON, MD, or HTML results in a plain text message. Combinations of users and groups are permitted. Users listed who are also group members or member in more than one group get the message only once.
-
-> NOTE: Parameters left unconfigured get "Kaholo" by default, including message body and title. If parameter `Email` is selected, parameter `From` must be a valid user name or it will be rejected by SystemXYZ with `HTTP 404 - Page not found`. This also requires the service token have the special permission `ex-send-email`, otherwise you get the same HTTP 404 error.
-
-### Parameters
-Required parameters have an asterisk (*) next to their names.
-* XYZ Endpoint * - as described above in [plugin settings](#plugin-settings)
-* Service Token * - as described above in [plugin settings](#plugin-settings)
-* Message Title - plain text one-line title of the message
-* Message Body - the body of the message in JSON, MD, HTML, or plain text format
-* Recipients * - the list of recipients, either usernames or group names, one per line
-* From - indicates the source of the message, either a valid user name or arbitrary text string
-* Email - if checked and SystemXYZ is linked to an email system, the message is sent out as an email instead of a SystemXYZ Ex message.
-
-## Method: Read Zed Alarms
-This method reads a Zed Alarm group from SystemXYZ whether or not any of the alarms are active. It is commonly used with the Kaholo [SystemXYZ trigger](https://github.com/Kaholo/kaholo-trigger-systemxyz) and [SystemXYZ Zed Hooks](https://www.systemxyz.com.nz/zed_hooks/v4). The trigger provides the timely response to an alarm, while this method provides the details of the alarm.
-
-If parameter `Zed Hook Code` is configured, the details on the triggering alarm are provided. If parameter `Alarm Group` is provided the details on all alarms (active or not) are provided. If both are configured, details on both are provided, even if the code refers to an alarm not in that group. This is useful in overcoming cross-group limitations in SystemXYZ alarms.
-
-The Final Result in Kaholo is a JSON document of the same format as the equivalent [SystemXYZ Alarm Export](https://www.systemxyz.com.nz/alarm_export/v4).
-
-### Parameters
-Required parameters have an asterisk (*) next to their names.
-* XYZ Endpoint * - as described above in [plugin settings](#plugin-settings)
-* Service Token * - as described above in [plugin settings](#plugin-settings)
-* Zed Hook Code - a code string from Zed Hooks, e.g. `zed-20220329aad`
-* Zed Alarm Group - a Zed alarm group, e.g. `zed-group-one`
-
-## Method: Set Zed Alarm
-This method is not yet implemented. If you are interested in setting Zed alarms from Kaholo, please let us know! support@kaholo.io.
+* Working Directory - a directory on the Kaholo agent containing the test file and any input/output files created or used by the test. If omitted, the default working directory on the Kaholo agent is used. Use Command Line plugin to run command `pwd` if you do not know your agent's default working directory.
+* Puppeteer Test File - the path to the JavaScript Puppeteer test file to execute, either relative to the Working Directory or absolute.
+* Environment Variables - key=value pairs that will become environment variables when the test is executed. This is a flexible method to inject configured values into the Puppeteer test without changes being made to the test's JavaScript code.

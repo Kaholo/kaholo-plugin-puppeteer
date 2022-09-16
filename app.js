@@ -15,11 +15,7 @@ async function runPuppeteerTest(params) {
     environmentalVariables = {},
   } = params;
 
-  console.error(JSON.stringify(environmentalVariables));
-
   const envVarsParams = buildEnvVarsParams(environmentalVariables);
-
-  console.error(envVarsParams);
 
   const commandOutput = await exec(`\
 docker run --rm \
@@ -61,8 +57,6 @@ async function runPuppeteerTestParams(params) {
   }
 
   const envVarsParams = buildEnvVarsParams(environmentalVariables);
-
-  console.error(envVarsParams);
 
   const commandOutput = await exec(`\
 docker run --rm \

@@ -1,7 +1,8 @@
-const { bootstrap, docker } = require("@kaholo/plugin-library");
+const { bootstrap } = require("@kaholo/plugin-library");
 const util = require("util");
 const path = require("path");
 const childProcess = require("child_process");
+const { buildEnvironmentVariableArguments } = require("./helpers");
 
 const exec = util.promisify(childProcess.exec);
 
@@ -14,7 +15,7 @@ async function runPuppeteerTest(params) {
     environmentalVariables = {},
   } = params;
 
-  const envVarsParams = docker.buildEnvironmentVariableArguments(environmentalVariables);
+  const envVarsParams = buildEnvironmentVariableArguments(environmentalVariables);
 
   const commandOutput = await exec(`\
 docker run --rm \

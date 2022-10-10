@@ -27,6 +27,14 @@
       "type": "string",
       "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file",
       "learnUrl": "https://pptr.dev/"
+    },
+    {
+      "name": "puppeteerJSFile",
+      "viewName": "Puppeteer Test File",
+      "description": "JavaScript File that runs a puppeteer test",
+      "placeholder": "login-test.js",
+      "type": "string",
+      "learnUrl": "https://pptr.dev/"
     }
   ],
   "methods": [

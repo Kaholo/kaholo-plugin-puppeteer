@@ -1,10 +1,13 @@
-const { bootstrap } = require("@kaholo/plugin-library");
-const util = require("util");
 const path = require("path");
-const childProcess = require("child_process");
-const { buildEnvironmentVariableArguments } = require("./helpers");
+const {
+  bootstrap,
+  docker,
+} = require("@kaholo/plugin-library");
 
-const exec = util.promisify(childProcess.exec);
+const {
+  pathExists,
+  exec,
+} = require("./helpers");
 
 const KAHOLO_PUPPETEER_IMAGE = "buildkite/puppeteer";
 
@@ -15,16 +18,24 @@ async function runPuppeteerTest(params) {
     environmentalVariables = {},
   } = params;
 
-  const envVarsParams = buildEnvironmentVariableArguments(environmentalVariables);
+  const absoluteWorkingDir = path.resolve(workingDirectory);
+  if (!await pathExists(absoluteWorkingDir)) {
+    throw new Error(`Path ${workingDirectory} does not exist on agent!`);
+  }
 
-  const commandOutput = await exec(`\
-docker run --rm \
-${envVarsParams} \
--v ${path.resolve(workingDirectory)}:/project \
--w /project \
-${KAHOLO_PUPPETEER_IMAGE} \
-node ${puppeteerJSFile}\
-`, {
+  const puppeteerCommand = `node ${puppeteerJSFile}`;
+  const dockerCommand = docker.buildDockerCommand({
+    image: KAHOLO_PUPPETEER_IMAGE,
+    command: docker.sanitizeCommand(puppeteerCommand),
+    workingDirectory: "/project",
+    environmentVariables: environmentalVariables,
+    additionalArguments: [
+      "-v",
+      `${absoluteWorkingDir}:/project`,
+    ],
+  });
+
+  const commandOutput = await exec(dockerCommand, {
     env: {
       ...process.env,
       ...environmentalVariables,

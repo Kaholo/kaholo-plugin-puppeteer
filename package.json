@@ -1,6 +1,5 @@
 {
   "name": "puppeteer",
-  "version": "1.0.0",
   "description": "Puppeteer tests runner for Kaholo",
   "main": "app.js",
   "scripts": {

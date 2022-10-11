@@ -1,4 +1,5 @@
 const { docker } = require("@kaholo/plugin-library");
+const { readFile } = require("fs/promises");
 const path = require("path");
 
 const {
@@ -19,6 +20,8 @@ async function runPuppeteerTest(params) {
   if (!await pathExists(absoluteWorkingDir)) {
     throw new Error(`Path ${workingDirectory} does not exist on agent!`);
   }
+
+  await analyzeTestFile(path.resolve(absoluteWorkingDir, puppeteerJSFile));
 
   const puppeteerCommand = `node ${puppeteerJSFile}`;
   const dockerCommand = docker.buildDockerCommand({
@@ -46,6 +49,13 @@ async function runPuppeteerTest(params) {
   }
 
   return commandOutput.stdout;
+}
+
+async function analyzeTestFile(filePath) {
+  const fileContent = await readFile(filePath).then((contentBuffer) => contentBuffer.toString());
+  if (!/require\(["'`]puppeteer["'`]\)/mg.test(fileContent)) {
+    throw new Error("The specified file is not a JavaScript Puppeteer test");
+  }
 }
 
 module.exports = {

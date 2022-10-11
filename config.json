@@ -51,8 +51,8 @@
         },
         {
           "name": "puppeteerJSFile",
-          "viewName": "Puppeteer Test File",
-          "description": "JavaScript File that runs a puppeteer test",
+          "viewName": "JavaScript Puppeteer Test",
+          "description": "JavaScript file that runs a puppeteer test",
           "placeholder": "login-test.js",
           "type": "string",
           "required": true,

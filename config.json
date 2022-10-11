@@ -65,6 +65,13 @@
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",
           "parserType": "keyValuePairs"
+        },
+        {
+          "name": "puppeteerCaptureCommand",
+          "viewName": "Puppeteer CLI Command",
+          "type": "string",
+          "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
+          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600"
         }
       ]
     }

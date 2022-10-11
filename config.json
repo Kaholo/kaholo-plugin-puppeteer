@@ -54,7 +54,9 @@
           "viewName": "JavaScript Puppeteer Test",
           "description": "JavaScript file that runs a puppeteer test",
           "placeholder": "login-test.js",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listJavaScriptFiles",
           "required": true,
           "learnUrl": "https://pptr.dev/"
         },

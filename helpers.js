@@ -1,21 +1,20 @@
-const _ = require("lodash/fp");
+const fs = require("fs");
+const { access } = require("fs/promises");
+const { promisify } = require("util");
+const { exec: execWithCallback } = require("child_process");
 
-function buildEnvironmentVariableArguments(environmentVariables) {
-  if (
-    !environmentVariables
-    || !_.isObject(environmentVariables)
-    || _.isArray(environmentVariables)
-  ) {
-    throw new Error("environmentVariables parameter must be an object.");
+const exec = promisify(execWithCallback);
+
+async function pathExists(path) {
+  try {
+    await access(path, fs.constants.F_OK);
+    return true;
+  } catch {
+    return false;
   }
-
-  return Object.entries(environmentVariables)
-    .reduce(
-      (acc, [name]) => `${acc}-e ${name} `,
-      "",
-    ).trim();
 }
 
 module.exports = {
-  buildEnvironmentVariableArguments,
+  pathExists,
+  exec,
 };

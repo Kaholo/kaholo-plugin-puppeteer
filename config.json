@@ -51,10 +51,12 @@
         },
         {
           "name": "puppeteerJSFile",
-          "viewName": "Puppeteer Test File",
-          "description": "JavaScript File that runs a puppeteer test",
+          "viewName": "JavaScript Puppeteer Test",
+          "description": "JavaScript file that runs a puppeteer test",
           "placeholder": "login-test.js",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listJavaScriptFiles",
           "required": true,
           "learnUrl": "https://pptr.dev/"
         },
@@ -65,6 +67,13 @@
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",
           "parserType": "keyValuePairs"
+        },
+        {
+          "name": "puppeteerCaptureCommand",
+          "viewName": "Puppeteer CLI Command",
+          "type": "string",
+          "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
+          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600"
         }
       ]
     }

@@ -1,6 +1,5 @@
 {
   "name": "puppeteer",
-  "version": "1.0.0",
   "description": "Puppeteer tests runner for Kaholo",
   "main": "app.js",
   "scripts": {
@@ -20,7 +19,7 @@
   "homepage": "https://github.com/Kaholo/kaholo-plugin-puppeteer#readme",
   "dependencies": {
     "@kaholo/plugin-library": "^2.0.0",
-    "puppeteer": "17.0.0",
+    "glob": "^8.0.3",
     "lodash": "4.17.21"
   },
   "devDependencies": {

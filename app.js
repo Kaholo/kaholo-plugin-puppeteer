@@ -5,4 +5,5 @@ const autocomplete = require("./autocomplete");
 
 module.exports = bootstrap({
   runPuppeteerTest: puppeteerService.runPuppeteerTest,
+  runCliCommand: puppeteerService.runCliCommand,
 }, autocomplete);

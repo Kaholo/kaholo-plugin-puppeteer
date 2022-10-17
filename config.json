@@ -61,7 +61,7 @@
           "learnUrl": "https://pptr.dev/"
         },
         {
-          "name": "environmentalVariables",
+          "name": "environmentVariables",
           "viewName": "Environment Variables",
           "description": "One key=value pair per line to be set as environment variables",
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",

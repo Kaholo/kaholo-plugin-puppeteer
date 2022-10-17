@@ -13,7 +13,7 @@ async function runPuppeteerTest(params) {
   const {
     puppeteerJSFile,
     workingDirectory,
-    environmentalVariables = {},
+    environmentVariables = {},
   } = params;
 
   const absoluteWorkingDir = path.resolve(workingDirectory);
@@ -26,8 +26,8 @@ async function runPuppeteerTest(params) {
   const puppeteerCommand = `node ${puppeteerJSFile}`;
 
   return runPuppeteerCommand({
+    environmentVariables,
     command: puppeteerCommand,
-    environmentVariables: environmentalVariables,
     workingDirectory: absoluteWorkingDir,
   });
 }

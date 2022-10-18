@@ -13,8 +13,7 @@ async function runPuppeteerTest(params) {
   const {
     puppeteerJSFile,
     workingDirectory,
-    puppeteerCaptureCommand,
-    environmentalVariables = {},
+    environmentVariables = {},
   } = params;
 
   const absoluteWorkingDir = path.resolve(workingDirectory);
@@ -22,34 +21,57 @@ async function runPuppeteerTest(params) {
     throw new Error(`Path ${workingDirectory} does not exist on agent!`);
   }
 
-  let commandToExecute;
+  await analyzeTestFile(path.resolve(absoluteWorkingDir, puppeteerJSFile));
 
-  if (puppeteerCaptureCommand) {
-    commandToExecute = sanitizeCaptureCommand(puppeteerCaptureCommand);
-  } else {
-    await analyzeTestFile(path.resolve(absoluteWorkingDir, puppeteerJSFile));
+  const puppeteerCommand = `node ${puppeteerJSFile}`;
 
-    const puppeteerCommand = `node ${puppeteerJSFile}`;
-    commandToExecute = docker.buildDockerCommand({
-      image: KAHOLO_PUPPETEER_IMAGE,
-      command: docker.sanitizeCommand(puppeteerCommand),
-      workingDirectory: "/project",
-      environmentVariables: environmentalVariables,
-      additionalArguments: [
-        "-v",
-        `${absoluteWorkingDir}:/project`,
-      ],
-    });
-  }
+  return runPuppeteerCommand({
+    environmentVariables,
+    command: puppeteerCommand,
+    workingDirectory: absoluteWorkingDir,
+  });
+}
+
+async function runCliCommand(params) {
+  const {
+    puppeteerCommand,
+    workingDirectory,
+  } = params;
+
+  return runPuppeteerCommand({
+    command: sanitizeCustomCommand(puppeteerCommand),
+    workingDirectory,
+    isCliCommand: true,
+  });
+}
+
+async function runPuppeteerCommand(params) {
+  const {
+    command,
+    environmentVariables,
+    workingDirectory,
+    isCliCommand = false,
+  } = params;
+
+  const commandToExecute = docker.buildDockerCommand({
+    image: KAHOLO_PUPPETEER_IMAGE,
+    command: docker.sanitizeCommand(command),
+    workingDirectory: "/project",
+    environmentVariables,
+    additionalArguments: [
+      "-v",
+      `${workingDirectory}:/project`,
+    ],
+  });
 
   const commandOutput = await exec(commandToExecute, {
     env: {
       ...process.env,
-      ...environmentalVariables,
+      ...environmentVariables,
     },
   });
 
-  if (commandOutput.stderr && !commandOutput.stdout && !puppeteerCaptureCommand) {
+  if (commandOutput.stderr && !commandOutput.stdout && !isCliCommand) {
     throw new Error(commandOutput.stderr);
   } else if (commandOutput.stderr) {
     console.error(commandOutput.stderr);
@@ -65,11 +87,12 @@ async function analyzeTestFile(filePath) {
   }
 }
 
-function sanitizeCaptureCommand(rawCommand) {
+function sanitizeCustomCommand(rawCommand) {
   const sanitizedCommand = rawCommand.replace(/^puppeteer(-cli)?/, "npx -y puppeteer-cli");
   return `bash -c ${JSON.stringify(sanitizedCommand)}`;
 }
 
 module.exports = {
   runPuppeteerTest,
+  runCliCommand,
 };

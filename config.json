@@ -61,19 +61,32 @@
           "learnUrl": "https://pptr.dev/"
         },
         {
-          "name": "environmentalVariables",
+          "name": "environmentVariables",
           "viewName": "Environment Variables",
           "description": "One key=value pair per line to be set as environment variables",
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",
           "parserType": "keyValuePairs"
+        }
+      ]
+    },
+    {
+      "name": "runCliCommand",
+      "viewName": "Run Puppeteer CLI Command",
+      "params": [
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
+          "description": "Path to a directory on the Kaholo agent which contains puppeteer tests",
+          "placeholder": "testrepo/uitests/auth",
+          "type": "string"
         },
         {
-          "name": "puppeteerCaptureCommand",
+          "name": "puppeteerCommand",
           "viewName": "Puppeteer CLI Command",
-          "type": "string",
           "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
-          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600"
+          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600",
+          "type": "string"
         }
       ]
     }

@@ -16,7 +16,7 @@ async function runPuppeteerTest(params) {
     environmentVariables = {},
   } = params;
 
-  const absoluteWorkingDir = path.resolve(workingDirectory);
+  const absoluteWorkingDir = path.resolve(workingDirectory || "");
   if (!await pathExists(absoluteWorkingDir)) {
     throw new Error(`Path ${workingDirectory} does not exist on agent!`);
   }
@@ -37,7 +37,7 @@ async function runPuppeteerCliCommand(params) {
     workingDirectory,
   } = params;
 
-  const absoluteWorkingDir = path.resolve(workingDirectory);
+  const absoluteWorkingDir = path.resolve(workingDirectory || "");
   if (!await pathExists(absoluteWorkingDir)) {
     throw new Error(`Path ${workingDirectory} does not exist on agent!`);
   }

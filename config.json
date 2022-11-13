@@ -77,16 +77,17 @@
         {
           "name": "workingDirectory",
           "viewName": "Working Directory",
-          "description": "Path to a directory on the Kaholo agent which contains puppeteer tests",
-          "placeholder": "testrepo/uitests/auth",
+          "description": "Path to a directory on the Kaholo agent for input/output files",
+          "placeholder": "/twiddlebug/workspace",
           "type": "string"
         },
         {
           "name": "puppeteerCommand",
           "viewName": "Puppeteer CLI Command",
           "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
-          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600",
-          "type": "string"
+          "placeholder": "puppeteer screenshot https://kaholo.io screen.png --no-sandbox --viewport 800x600",
+          "type": "string",
+          "learnUrl": "https://www.npmjs.com/package/puppeteer-cli"
         }
       ]
     }

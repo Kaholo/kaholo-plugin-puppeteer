@@ -89,7 +89,7 @@ async function runCommandInDocker(params) {
 async function analyzeTestFile(filePath) {
   const fileContent = await readFile(filePath).then((contentBuffer) => contentBuffer.toString());
   if (!/require\(["'`]puppeteer["'`]\)/mg.test(fileContent)) {
-    throw new Error("The specified file is not a JavaScript Puppeteer test, it does not import ");
+    throw new Error("The specified file is not a JavaScript Puppeteer test, it does not import \"puppeteer\" package");
   }
 }
 

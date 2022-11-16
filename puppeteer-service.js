@@ -46,9 +46,6 @@ async function runPuppeteerCliCommand(params) {
     command: customSanitizeCommand(puppeteerCommand),
     workingDirectory: absoluteWorkingDir,
     isCliCommand: true,
-    buildCommandOptions: {
-      user: "node",
-    },
   });
 }
 
@@ -97,8 +94,10 @@ async function analyzeTestFile(filePath) {
 }
 
 function customSanitizeCommand(rawCommand) {
-  const sanitizedCommand = rawCommand.replace(/^puppeteer(-cli)?/, "npx puppeteer-cli");
-  return `bash -c ${JSON.stringify(sanitizedCommand)}`;
+  const puppeteerInstallCommand = "npm -g install puppeteer-cli --unsafe-perm=true";
+  const sanitizedCommand = rawCommand.replace(/^puppeteer(-cli)?/, "puppeteer");
+
+  return `bash -c ${JSON.stringify(`${puppeteerInstallCommand} && ${sanitizedCommand}`)}`;
 }
 
 module.exports = {

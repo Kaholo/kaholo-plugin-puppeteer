@@ -2,9 +2,11 @@ const { promisify } = require("util");
 const glob = promisify(require("glob"));
 const path = require("path");
 
+const DEFAULT_WORKING_DIRECTORY = "/twiddlebug/workspace";
+
 async function listJavaScriptFiles(query, { workingDirectory }) {
   const jsFiles = await glob("./**/*.js", {
-    cwd: path.resolve(workingDirectory),
+    cwd: path.resolve(DEFAULT_WORKING_DIRECTORY, workingDirectory),
   });
 
   const mappedAutocompleteItems = jsFiles.map((filePath) => ({

@@ -1,7 +1,7 @@
 {
   "name": "puppeteer",
   "viewName": "Puppeteer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "executer",
   "execProgram": "node",
   "imgUrl": "logo.png",
@@ -61,19 +61,33 @@
           "learnUrl": "https://pptr.dev/"
         },
         {
-          "name": "environmentalVariables",
+          "name": "environmentVariables",
           "viewName": "Environment Variables",
           "description": "One key=value pair per line to be set as environment variables",
           "placeholder": "USER=sally\nDEBUG_LEVEL=3",
           "type": "text",
           "parserType": "keyValuePairs"
+        }
+      ]
+    },
+    {
+      "name": "runCliCommand",
+      "viewName": "Run Puppeteer CLI Command",
+      "params": [
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
+          "description": "Path to a directory on the Kaholo agent for input/output files",
+          "placeholder": "/twiddlebug/workspace",
+          "type": "string"
         },
         {
-          "name": "puppeteerCaptureCommand",
+          "name": "puppeteerCommand",
           "viewName": "Puppeteer CLI Command",
-          "type": "string",
           "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
-          "placeholder": "puppeteer screenshot https://myweb.com myscreenshot.png --viewport 800x600"
+          "placeholder": "puppeteer screenshot https://kaholo.io screen.png --no-sandbox --viewport 800x600",
+          "type": "string",
+          "learnUrl": "https://www.npmjs.com/package/puppeteer-cli"
         }
       ]
     }

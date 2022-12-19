@@ -1,62 +1,93 @@
 {
-  "name": "kaholo-plugin-template",
-  "viewName": "Kaholo Template Plugin",
+  "name": "puppeteer",
+  "viewName": "Puppeteer",
+  "version": "1.0.0",
   "type": "executer",
-  "main": "app.js",
   "execProgram": "node",
-  "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.0.0",
-  "description": "This plugin is only a generic template.",
+  "main": "app.js",
+  "description": "UI testing using JavaScript tests with a headless browser",
   "category": [
-    "Basic Tools"
+    "Testing"
   ],
   "keywords": [
-    "template",
-    "plugin",
-    "kaholo",
-    "hello"
+    "puppeteer",
+    "javascript",
+    "headless",
+    "chrome",
+    "chromium",
+    "selenium",
+    "testing",
+    "browser"
    ],
   "settings": [
     {
-      "name": "helloName",
-      "viewName": "Default Hello Name",
+      "name": "workingDirectory",
+      "viewName": "Default Working Directory",
       "type": "string",
-      "description": "The person to whom to say hello by default",
-      "learnUrl": "https://docs.apify.com/api/v2#/introduction/authentication"
+      "description": "Path to a directory on the Kaholo agent which contains the Puppeteer Test JavaScript file",
+      "learnUrl": "https://pptr.dev/"
+    },
+    {
+      "name": "puppeteerJSFile",
+      "viewName": "Puppeteer Test File",
+      "description": "JavaScript File that runs a puppeteer test",
+      "placeholder": "login-test.js",
+      "type": "string",
+      "learnUrl": "https://pptr.dev/"
     }
   ],
   "methods": [
     {
-      "name": "hello",
-      "viewName": "Say hello",
+      "name": "runPuppeteerTest",
+      "viewName": "Run Puppeteer Test",
       "params": [
         {
-          "name": "helloName",
-          "viewName": "Hello Name",
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
+          "description": "Path to a directory on the Kaholo agent which contains puppeteer tests",
+          "placeholder": "testrepo/uitests/auth",
+          "type": "string"
+        },
+        {
+          "name": "puppeteerJSFile",
+          "viewName": "JavaScript Puppeteer Test",
+          "description": "JavaScript file that runs a puppeteer test",
+          "placeholder": "login-test.js",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listJavaScriptFiles",
+          "required": true,
+          "learnUrl": "https://pptr.dev/"
+        },
+        {
+          "name": "environmentVariables",
+          "viewName": "Environment Variables",
+          "description": "One key=value pair per line to be set as environment variables",
+          "placeholder": "USER=sally\nDEBUG_LEVEL=3",
+          "type": "text",
+          "parserType": "keyValuePairs"
+        }
+      ]
+    },
+    {
+      "name": "runCliCommand",
+      "viewName": "Run Puppeteer CLI Command",
+      "params": [
+        {
+          "name": "workingDirectory",
+          "viewName": "Working Directory",
+          "description": "Path to a directory on the Kaholo agent for input/output files",
+          "placeholder": "/twiddlebug/workspace",
+          "type": "string"
+        },
+        {
+          "name": "puppeteerCommand",
+          "viewName": "Puppeteer CLI Command",
+          "description": "Ad-hoc CLI command to capture screenshots or PDF without coding JavaScript tests",
+          "placeholder": "puppeteer screenshot https://kaholo.io screen.png --no-sandbox --viewport 800x600",
           "type": "string",
-          "required": false,
-          "placeholder": "World",
-          "default": "World",
-          "description": "The person to whom to say hello",
-          "learnUrl": "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"
-        },
-        {
-          "name": "secret",
-          "viewName": "Secret",
-          "type": "vault",
-          "required": false,
-          "description": "A secret we might also say.",
-          "learnUrl": "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"
-        },
-        {
-          "name": "saySecret",
-          "viewName": "Say secret",
-          "type": "boolean",
-          "required": false,
-          "default": false,
-          "description": "If checked we'll also say the secret.",
-          "learnUrl": "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program"
+          "learnUrl": "https://www.npmjs.com/package/puppeteer-cli"
         }
       ]
     }
